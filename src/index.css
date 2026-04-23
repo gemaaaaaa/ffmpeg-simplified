@@ -1,0 +1,75 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: 'Title Font';
+  src: url('/fonts/title.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@theme {
+  --font-serif: "Title Font", serif;
+  --font-sans: "Outfit", sans-serif;
+  
+  --color-navy-dark: #020617;
+  --color-navy-light: #0f172a;
+  --color-orange-dot: #f97316;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  background: var(--color-navy-dark);
+  color: #f8fafc;
+  overflow: hidden; /* No scrolling allowed as per requirements */
+  margin: 0;
+  height: 100vh;
+  width: 100vw;
+}
+
+#root {
+  height: 100%;
+}
+
+/* Starfield Animation */
+@keyframes twinkle {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
+.star {
+  position: absolute;
+  background: white;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* Glassmorphism utility */
+.glass {
+  background: rgba(15, 23, 42, 0.3);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-input {
+  box-shadow: inset 0 2px 10px 0 rgba(0, 0, 0, 0.2);
+}
+
+.glass-input:focus {
+  background: rgba(15, 23, 42, 0.5);
+  border-color: rgba(249, 115, 22, 0.3);
+  outline: none;
+}
+
+/* Custom glow effect */
+.glow-button {
+  transition: all 0.3s ease;
+}
+
+.glow-button:hover {
+  box-shadow: 0 0 20px rgba(249, 115, 22, 0.4);
+  transform: translateY(-1px);
+}
