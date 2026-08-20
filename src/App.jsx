@@ -1,20 +1,22 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Film, Layers, Activity, Cpu, Play } from 'lucide-react';
 import { generateFfmpegCommand } from './lib/groq.js';
 
-const StarField = () => {
-  const stars = useMemo(() => {
-    return Array.from({ length: 150 }).map((_, i) => ({
-      id: i,
-      left: `${Math.random() * 100}%`,
-      top: `${Math.random() * 100}%`,
-      size: Math.random() * 2 + 1,
-      duration: Math.random() * 3 + 2,
-      delay: Math.random() * 5,
-    }));
-  }, []);
+const stars = Array.from({ length: 150 }).map((_, i) => ({
+  id: i,
+  left: `${Math.random() * 100}%`,
+  top: `${Math.random() * 100}%`,
+  size: Math.random() * 2 + 1,
+  duration: Math.random() * 3 + 2,
+  delay: Math.random() * 5,
+}));
 
+const BITSTREAM_BITS = Array.from({ length: 10 }).map(() =>
+  Math.random() > 0.5 ? '1011001' : '0110101'
+);
+
+const StarField = () => {
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
       {stars.map((star) => (
@@ -40,13 +42,13 @@ const SchematicOverlay = () => {
     <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-[0.03]">
       {/* Bitstream bits */}
       <div className="absolute top-[20%] left-[10%] font-mono text-[10px] leading-tight select-none">
-        {Array.from({ length: 10 }).map((_, i) => (
-          <div key={i}>{Math.random() > 0.5 ? '1011001' : '0110101'}</div>
+        {BITSTREAM_BITS.map((bits, i) => (
+          <div key={i}>{bits}</div>
         ))}
       </div>
       <div className="absolute bottom-[20%] right-[10%] font-mono text-[10px] leading-tight select-none">
-        {Array.from({ length: 10 }).map((_, i) => (
-          <div key={i}>{Math.random() > 0.5 ? '1011001' : '0110101'}</div>
+        {BITSTREAM_BITS.map((bits, i) => (
+          <div key={i}>{bits}</div>
         ))}
       </div>
 
