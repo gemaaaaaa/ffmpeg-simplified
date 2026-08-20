@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Film, Layers, Activity, Cpu, Play } from 'lucide-react';
+import { generateFfmpegCommand } from './lib/groq.js';
 
 const StarField = () => {
   const stars = useMemo(() => {
@@ -87,6 +88,7 @@ const SchematicOverlay = () => {
 function App() {
   const [input, setInput] = useState('');
   const [generatedCommand, setGeneratedCommand] = useState('');
+  const [error, setError] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [copied, setCopied] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -94,39 +96,21 @@ function App() {
 
 
 
-  const handleGenerate = () => {
-    if (!input.trim()) return;
+  const handleGenerate = async () => {
+    if (!input.trim() || isGenerating) return;
 
     setIsGenerating(true);
+    setError('');
 
-    // Simulate generation logic
-    setTimeout(() => {
-      let command = 'ffmpeg -i input.mp4 ';
-      const lowerInput = input.toLowerCase();
-
-      if (lowerInput.includes('mp3') || lowerInput.includes('audio')) {
-        command += '-vn -acodec libmp3lame -q:a 2 output.mp3';
-      } else if (lowerInput.includes('1080p')) {
-        command += '-vf scale=1920:1080 -c:v libx264 -crf 20 output.mp4';
-      } else if (lowerInput.includes('resize') || lowerInput.includes('scale') || lowerInput.includes('720p')) {
-        command += '-vf scale=1280:720 -c:a copy output.mp4';
-      } else if (lowerInput.includes('gif')) {
-        command += '-vf "fps=10,scale=320:-1:flags=lanczos" output.gif';
-      } else if (lowerInput.includes('30 seconds')) {
-        command += '-ss 00:00:00 -t 00:00:30 -c copy output.mp4';
-      } else if (lowerInput.includes('remove audio') || lowerInput.includes('no audio')) {
-        command += '-an -c:v copy output.mp4';
-      } else if (lowerInput.includes('trim') || lowerInput.includes('cut')) {
-
-        command += '-ss 00:00:10 -t 00:00:30 -c copy output.mp4';
-      } else {
-
-        command += '-c:v libx264 -preset slow -crf 22 -c:a copy output.mp4';
-      }
-
+    try {
+      const command = await generateFfmpegCommand(input);
       setGeneratedCommand(command);
+    } catch (err) {
+      setGeneratedCommand('');
+      setError(err.message || 'Failed to generate command');
+    } finally {
       setIsGenerating(false);
-    }, 800);
+    }
   };
 
   const handleCopy = () => {
@@ -222,6 +206,17 @@ function App() {
             <div className="w-full min-h-[100px] flex items-center justify-center">
 
               <AnimatePresence mode="wait">
+                {error && (
+                  <motion.div
+                    key="error"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="w-full text-center text-red-400 text-sm font-mono break-all leading-relaxed px-4"
+                  >
+                    {error}
+                  </motion.div>
+                )}
                 {generatedCommand && (
                   <motion.div
                     key={generatedCommand}
