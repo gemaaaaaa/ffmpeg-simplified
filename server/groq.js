@@ -1,5 +1,5 @@
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
-const MODEL = 'qwen/qwen3.6-27b';
+const MODEL = 'qwen/qwen3.8-27b';
 
 const SYSTEM_PROMPT = [
   'You are an expert FFmpeg CLI assistant.',
